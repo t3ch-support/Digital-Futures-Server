@@ -1,0 +1,10 @@
+<launch>
+    <node name="rviz" pkg="rviz" type="rviz"/>
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
+            <arg name="port" value="9090"/>
+    </include>
+    <node pkg="localization_server" type="localization_assembler" name="localization_assembler" output="screen">
+    </node>
+    <node pkg="localization_server" type="frame_publisher" name="frame_publisher" output="screen">
+    </node>
+</launch>

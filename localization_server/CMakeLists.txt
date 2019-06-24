@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(localization_server)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   visualization_msgs
+  tf2_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -135,7 +136,9 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/localization_server_node.cpp)
+add_executable(localization_assembler src/localization_assembler.cpp)
+add_executable(frame_publisher src/frame_publisher.cpp)
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -148,10 +151,12 @@ include_directories(
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-# )
-
+target_link_libraries(localization_assembler
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(frame_publisher
+  ${catkin_LIBRARIES}
+)
 #############
 ## Install ##
 #############
