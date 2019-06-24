@@ -46,7 +46,6 @@ int main(int argc, char** argv)
                 // ros::Duration(1.0).sleep();
                 continue;
             }
-            //robot_publisher.publish(transformStamped);
             
             geometry_msgs::PoseStamped pose;
             pose.header.seq = transformStamped.header.seq;
