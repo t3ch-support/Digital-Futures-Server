@@ -39,28 +39,30 @@ int main(int argc, char** argv)
 
     static tf2_ros::TransformBroadcaster br;
     vector<geometry_msgs::TransformStamped> marker_frames;
-    // for(int i = 0; i<6; i++){
-    //     geometry_msgs::TransformStamped tS = createFrame(i, 0, 0, i);
-    //     marker_frames.push_back(tS);
-    // }
-    geometry_msgs::TransformStamped tS0 = createFrame(0, 0, 0, 2);
-    marker_frames.push_back(tS0);
-    geometry_msgs::TransformStamped tS1 = createFrame(0, 0.1, 0, 1);
-    marker_frames.push_back(tS1);
-    geometry_msgs::TransformStamped tS2 = createFrame(0, 0.2, 0, 0);
-    marker_frames.push_back(tS2);
-    geometry_msgs::TransformStamped tS3 = createFrame(0.1, 0, 0, 5);
-    marker_frames.push_back(tS3);
-    geometry_msgs::TransformStamped tS4 = createFrame(0.1, 0.1, 0, 4);
-    marker_frames.push_back(tS4);
-    geometry_msgs::TransformStamped tS5 = createFrame(0.1, 0.2, 0, 3);
-    marker_frames.push_back(tS5);
-    geometry_msgs::TransformStamped tS6 = createFrame(0.2, 0, 0, 8);
-    marker_frames.push_back(tS6);
-    geometry_msgs::TransformStamped tS7 = createFrame(0.2, 0.1, 0, 7);
-    marker_frames.push_back(tS7);
-    geometry_msgs::TransformStamped tS8 = createFrame(0.2, 0.2, 0, 6);
-    marker_frames.push_back(tS8);
+    for(int i = 0; i<1250; i++){
+        int x = (i*1)%25;
+        int y = floor(i/25);
+        geometry_msgs::TransformStamped tS = createFrame((double)y/10.0, (double)x/10.0, 0, i);
+        marker_frames.push_back(tS);
+    }
+    // geometry_msgs::TransformStamped tS0 = createFrame(0, 0, 0, 2);
+    // marker_frames.push_back(tS0);
+    // geometry_msgs::TransformStamped tS1 = createFrame(0, 0.1, 0, 1);
+    // marker_frames.push_back(tS1);
+    // geometry_msgs::TransformStamped tS2 = createFrame(0, 0.2, 0, 0);
+    // marker_frames.push_back(tS2);
+    // geometry_msgs::TransformStamped tS3 = createFrame(0.1, 0, 0, 5);
+    // marker_frames.push_back(tS3);
+    // geometry_msgs::TransformStamped tS4 = createFrame(0.1, 0.1, 0, 4);
+    // marker_frames.push_back(tS4);
+    // geometry_msgs::TransformStamped tS5 = createFrame(0.1, 0.2, 0, 3);
+    // marker_frames.push_back(tS5);
+    // geometry_msgs::TransformStamped tS6 = createFrame(0.2, 0, 0, 8);
+    // marker_frames.push_back(tS6);
+    // geometry_msgs::TransformStamped tS7 = createFrame(0.2, 0.1, 0, 7);
+    // marker_frames.push_back(tS7);
+    // geometry_msgs::TransformStamped tS8 = createFrame(0.2, 0.2, 0, 6);
+    // marker_frames.push_back(tS8);
 
     ros::Rate rate(10.0);
     while(node.ok()){
