@@ -67,10 +67,10 @@ int main(int argc, char** argv)
                 //continue;
             }
             if(failed){
-                ROS_INFO_STREAM("Failed, pushing last known pose");
+                //ROS_INFO_STREAM("Failed, pushing last known pose");
                 poseArray.poses.push_back(robotPoseHistory[i]);
             }else{
-                ROS_INFO_STREAM("Success");
+                //ROS_INFO_STREAM("Success");
                 
                 geometry_msgs::Pose pose;
                 pose.position.x = transformStamped.transform.translation.x;
