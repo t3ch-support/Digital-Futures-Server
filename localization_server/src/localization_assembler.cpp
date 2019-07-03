@@ -1,7 +1,10 @@
 #include <ros/ros.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/Pose.h>
+
 #include <geometry_msgs/PoseStamped.h>
+
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2_ros/transform_broadcaster.h>
@@ -22,19 +25,23 @@ int main(int argc, char** argv)
     tf2_ros::TransformListener tL(tfBuffer);
 
     // Lists
-    vector<ros::Publisher> locationPublishers;
+    // vector<ros::Publisher> locationPublishers;
 
-    for(int i = 0; i < 21; i++){
-        std::string id = std::to_string(i);
-        ros::Publisher temp_robot_publisher;
-        temp_robot_publisher = node.advertise<geometry_msgs::PoseStamped>("/digital_futures/robot_"+id+"/robot_global_pose", 10);
-        locationPublishers.push_back(temp_robot_publisher);
-    }
+    // for(int i = 0; i < 21; i++){
+    //     std::string id = std::to_string(i);
+    //     ros::Publisher temp_robot_publisher;
+    //     temp_robot_publisher = node.advertise<geometry_msgs::PoseStamped>("/digital_futures/robot_"+id+"/robot_global_pose", 10);
+    //     locationPublishers.push_back(temp_robot_publisher);
+    // }
+    ros::Publisher pose_array_publisher = node.advertise<geometry_msgs::PoseArray>("/digital_futures/poseArray/robot_global_poses", 10);
     
 
 
     ros::Rate rate(30.0);
     while(node.ok()){
+        geometry_msgs::PoseArray poseArray;
+        poseArray.header.frame_id = "map";
+        poseArray.header.stamp = ros::Time::now();
         for(int i = 0; i < 21; i++){
             std::string id = std::to_string(i);
 
@@ -47,20 +54,19 @@ int main(int argc, char** argv)
                 continue;
             }
             
-            geometry_msgs::PoseStamped pose;
-            pose.header.seq = transformStamped.header.seq;
-            pose.header.stamp = ros::Time::now();
-            pose.header.frame_id = transformStamped.header.frame_id;
-            pose.pose.position.x = transformStamped.transform.translation.x;
-            pose.pose.position.y = transformStamped.transform.translation.y;
-            pose.pose.position.z = transformStamped.transform.translation.z;
-            pose.pose.orientation.w = transformStamped.transform.rotation.w;
-            pose.pose.orientation.x = transformStamped.transform.rotation.x;
-            pose.pose.orientation.y = transformStamped.transform.rotation.y;
-            pose.pose.orientation.z = transformStamped.transform.rotation.z;
-            locationPublishers[i].publish(pose);
-
+            geometry_msgs::Pose pose;
+            pose.position.x = transformStamped.transform.translation.x;
+            pose.position.y = transformStamped.transform.translation.y;
+            pose.position.z = transformStamped.transform.translation.z;
+            pose.orientation.w = transformStamped.transform.rotation.w;
+            pose.orientation.x = transformStamped.transform.rotation.x;
+            pose.orientation.y = transformStamped.transform.rotation.y;
+            pose.orientation.z = transformStamped.transform.rotation.z;
+            //locationPublishers[i].publish(pose);
+            poseArray.poses.push_back(pose);
+            
         }
+        pose_array_publisher.publish(poseArray);
         ros::spinOnce();
         rate.sleep();
     }
