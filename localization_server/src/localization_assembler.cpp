@@ -25,14 +25,14 @@ int main(int argc, char** argv)
     tf2_ros::TransformListener tL(tfBuffer);
 
     // Lists
-    // vector<ros::Publisher> locationPublishers;
+    vector<ros::Publisher> locationPublishers;
 
-    // for(int i = 0; i < 21; i++){
-    //     std::string id = std::to_string(i);
-    //     ros::Publisher temp_robot_publisher;
-    //     temp_robot_publisher = node.advertise<geometry_msgs::PoseStamped>("/digital_futures/robot_"+id+"/robot_global_pose", 10);
-    //     locationPublishers.push_back(temp_robot_publisher);
-    // }
+    for(int i = 0; i < 21; i++){
+        std::string id = std::to_string(i);
+        ros::Publisher temp_robot_publisher;
+        temp_robot_publisher = node.advertise<geometry_msgs::PoseStamped>("/digital_futures/robot_"+id+"/robot_global_pose", 10);
+        locationPublishers.push_back(temp_robot_publisher);
+    }
     ros::Publisher pose_array_publisher = node.advertise<geometry_msgs::PoseArray>("/digital_futures/poseArray/robot_global_poses", 10);
     
 
@@ -62,8 +62,21 @@ int main(int argc, char** argv)
             pose.orientation.x = transformStamped.transform.rotation.x;
             pose.orientation.y = transformStamped.transform.rotation.y;
             pose.orientation.z = transformStamped.transform.rotation.z;
-            //locationPublishers[i].publish(pose);
+            
             poseArray.poses.push_back(pose);
+
+            geometry_msgs::PoseStamped poseStamped;
+            poseStamped.header.seq = transformStamped.header.seq;
+            poseStamped.header.stamp = ros::Time::now();
+            poseStamped.header.frame_id = transformStamped.header.frame_id;
+            poseStamped.pose.position.x = transformStamped.transform.translation.x;
+            poseStamped.pose.position.y = transformStamped.transform.translation.y;
+            poseStamped.pose.position.z = transformStamped.transform.translation.z;
+            poseStamped.pose.orientation.w = transformStamped.transform.rotation.w;
+            poseStamped.pose.orientation.x = transformStamped.transform.rotation.x;
+            poseStamped.pose.orientation.y = transformStamped.transform.rotation.y;
+            poseStamped.pose.orientation.z = transformStamped.transform.rotation.z;
+            locationPublishers[i].publish(pose);
             
         }
         pose_array_publisher.publish(poseArray);
