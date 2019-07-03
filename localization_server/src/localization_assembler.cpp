@@ -36,7 +36,18 @@ int main(int argc, char** argv)
     ros::Publisher pose_array_publisher = node.advertise<geometry_msgs::PoseArray>("/digital_futures/poseArray/robot_global_poses", 10);
     
 
-
+    vector<geometry_msgs::Pose> robotPoseHistory;
+    for(int i = 0; i < 21; i++){
+        geometry_msgs::Pose tempPose;
+        tempPose.position.x = 0;
+        tempPose.position.y = 0;
+        tempPose.position.z = 0;
+        tempPose.orientation.w = 0;
+        tempPose.orientation.x = 0;
+        tempPose.orientation.y = 0;
+        tempPose.orientation.z = 0;
+        robotPoseHistory.push_back(tempPose);
+    }
     ros::Rate rate(30.0);
     while(node.ok()){
         geometry_msgs::PoseArray poseArray;
@@ -44,26 +55,36 @@ int main(int argc, char** argv)
         poseArray.header.stamp = ros::Time::now();
         for(int i = 0; i < 21; i++){
             std::string id = std::to_string(i);
-
+            bool failed = false;
             geometry_msgs::TransformStamped transformStamped;
             try{
                 transformStamped = tfBuffer.lookupTransform("map", "robot_"+id, ros::Time(0));
             }catch(tf2::TransformException &ex){
-                // ROS_WARN("%s", ex.what());
+                failed = true;
+                //ROS_WARN("%s", ex.what());
+                //ROS_WARN(failed);
                 // ros::Duration(1.0).sleep();
-                continue;
+                //continue;
+            }
+            if(failed){
+                ROS_INFO_STREAM("Failed, pushing last known pose");
+                poseArray.poses.push_back(robotPoseHistory[i]);
+            }else{
+                ROS_INFO_STREAM("Success");
+                
+                geometry_msgs::Pose pose;
+                pose.position.x = transformStamped.transform.translation.x;
+                pose.position.y = transformStamped.transform.translation.y;
+                pose.position.z = transformStamped.transform.translation.z;
+                pose.orientation.w = transformStamped.transform.rotation.w;
+                pose.orientation.x = transformStamped.transform.rotation.x;
+                pose.orientation.y = transformStamped.transform.rotation.y;
+                pose.orientation.z = transformStamped.transform.rotation.z;
+            
+                poseArray.poses.push_back(pose);
+                robotPoseHistory[i] = pose;
             }
             
-            geometry_msgs::Pose pose;
-            pose.position.x = transformStamped.transform.translation.x;
-            pose.position.y = transformStamped.transform.translation.y;
-            pose.position.z = transformStamped.transform.translation.z;
-            pose.orientation.w = transformStamped.transform.rotation.w;
-            pose.orientation.x = transformStamped.transform.rotation.x;
-            pose.orientation.y = transformStamped.transform.rotation.y;
-            pose.orientation.z = transformStamped.transform.rotation.z;
-            
-            poseArray.poses.push_back(pose);
 
             geometry_msgs::PoseStamped poseStamped;
             poseStamped.header.seq = transformStamped.header.seq;
