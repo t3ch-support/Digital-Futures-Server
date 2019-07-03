@@ -76,7 +76,7 @@ int main(int argc, char** argv)
             poseStamped.pose.orientation.x = transformStamped.transform.rotation.x;
             poseStamped.pose.orientation.y = transformStamped.transform.rotation.y;
             poseStamped.pose.orientation.z = transformStamped.transform.rotation.z;
-            locationPublishers[i].publish(pose);
+            locationPublishers[i].publish(poseStamped);
             
         }
         pose_array_publisher.publish(poseArray);
