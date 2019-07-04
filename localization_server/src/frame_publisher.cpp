@@ -22,7 +22,9 @@ geometry_msgs::TransformStamped createFrame(double x, double y, double z, int id
     transformStamped.transform.translation.z = z;
 
     tf2::Quaternion q;
-    q.setRPY(0,0,(0.5*M_PI));
+    // q.setRPY(0,0,(0.5*M_PI));
+    q.setRPY(0,0,0);
+    
     transformStamped.transform.rotation.x = q.x();
     transformStamped.transform.rotation.y = q.y();
     transformStamped.transform.rotation.z = q.z();
@@ -42,10 +44,11 @@ int main(int argc, char** argv)
     for(int i = 0; i<1250; i++){
         int x = (i*1)%25;
         int y = floor(i/25);
-        geometry_msgs::TransformStamped tS = createFrame((double)y/10.0, 2.4-(double)x/10.0, 0, i);
+        // geometry_msgs::TransformStamped tS = createFrame((double)y/10.0, 2.4-(double)x/10.0, 0, i);
+        geometry_msgs::TransformStamped tS = createFrame(2.4-(double)x/10.0, (double)y/10.0, 0, i);
+        
         marker_frames.push_back(tS);
     }
-
 
     ros::Rate rate(10.0);
     while(node.ok()){
